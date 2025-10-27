@@ -1,5 +1,7 @@
 import os
 from typing import Literal
+from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 from deepagents import create_deep_agent
 from langchain.chat_models import init_chat_model
 from dotenv import load_dotenv
@@ -38,7 +40,26 @@ agent = create_deep_agent(
 )
 
 # Invoke the agent
-result = agent.invoke({"messages": [{"role": "user", "content": "What is langgraph?"}]})
-print("Agent response:")
-print(result['messages'])
-#print((result['messages'][0]).content)
+# result = agent.invoke({"messages": [{"role": "user", "content": "What is langgraph?"}]})
+# print("Agent Response:")
+# print(result['messages'][-1].content)
+
+app = FastAPI(title="DeepAgents Research API")
+
+class QueryRequest(BaseModel):
+    question: str
+
+@app.post("/ask")
+async def ask_model(request: QueryRequest):
+    """Endpoint to ask the model a question."""
+    try:
+        result = agent.invoke({
+            "messages": [{"role": "user", "content": request.question}]
+        })
+        return {"response": result["messages"][-1].content}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/")
+def root():
+    return {"message": "DeepAgents API is running!"}

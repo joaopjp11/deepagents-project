@@ -1,6 +1,6 @@
 # deepagents
 
-Deepagents is a implementation of the deepagents package to to apply deepagent architeture and other AI concepts in real code.
+Deepagents is a implementation of the deepagents package to apply deepagent architeture and other AI concepts in real code.
 
 ---
 
@@ -62,9 +62,11 @@ poetry run python main.py
 ```
 project-root/
 ├── src/               # Source code
-│   ├── components/    # UI components
-│   ├── services/      # API or business logic
-│   ├── utils/         # Helper functions
+│   ├── llm/           # Deep agent configuration
+│   ├── models/        #
+│   ├── routers/       # Endpoints
+│   ├── tools/         # Tools or deep agent and subagents
+│   ├── workflow/      # Subagent and graphs
 │   └── main.js
 ├── tests/             # Unit and integration tests
 ├── docs/              # Documentation

@@ -78,7 +78,7 @@ project-root/
 ## Running the Project
 To run the project 
 ```bash
-poetry run uvicorn src.main:app --reload
+poetry run uvicorn src.api:app --reload
 ```
 #### About this command 
 *uvicorn* - An ASGI (Asynchronous Server Gateway Interface) server that runs async Python web applications. It's commonly used with FastAPI and other modern async frameworks.

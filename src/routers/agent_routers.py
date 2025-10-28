@@ -17,28 +17,42 @@ async def ask_model(request: QueryRequest):
         result = agent.invoke({
             "messages": [{"role": "user", "content": request.question}]
         }, config)
-        # Ocorre sempre interrupt
-        interrupt_id = str(uuid.uuid4())
-        interrupt_store[interrupt_id] = result
-        return {
-            "interrupt_id": interrupt_id,
+
+        if result.get("__interrupt__"):
+            # Extract interrupt information
+            interrupts = result["__interrupt__"][0].value
+            action_requests = interrupts["action_requests"]
+            review_configs = interrupts["review_configs"]
+
+            # Create a lookup map from tool name to review config
+            config_map = {cfg["action_name"]: cfg for cfg in review_configs}
+
+            # Display the pending actions to the user
+            for action in action_requests:
+                review_config = config_map[action["name"]]
+                print(f"Tool: {action['name']}")
+                print(f"Arguments: {action['args']}")
+                print(f"Allowed decisions: {review_config['allowed_decisions']}")
+            return {
+            "interrupt_id": "some_id",
             "message": "Interrupt forced. Awaiting human decision."
-        }
+            }
+
+        return {"response": result["messages"][-1].content}
+    
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @router.post("/interrupt_decision")
 async def interrupt_decision(request: InterruptDecisionRequest):
-    interrupt = interrupt_store.get(request.interrupt_id)
+    interrupt = request.interrupt_id
     if not interrupt:
         raise HTTPException(status_code=404, detail="Interrupt not found")
     if request.decision == "approve":
         # Continua o fluxo
         result = agent.invoke(Command(resume={"decisions": [{"type": "approve"}]}), config=config)
-        del interrupt_store[request.interrupt_id]
         return {"response": result["messages"][-1].content}
     elif request.decision == "reject":
-        del interrupt_store[request.interrupt_id]
         return {"message": "Pergunta rejeitada pelo humano."}
     else:
         raise HTTPException(status_code=400, detail="Decisão inválida")

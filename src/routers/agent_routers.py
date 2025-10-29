@@ -49,11 +49,10 @@ async def interrupt_decision(request: InterruptDecisionRequest):
     if not interrupt:
         raise HTTPException(status_code=404, detail="Interrupt not found")
     if request.decision == "approve":
-        # Continua o fluxo
         result = agent.invoke(Command(resume={"decisions": [{"type": "approve"}]}), config=config)
         return {"response": result["messages"][-1].content}
     elif request.decision == "reject":
-        return {"message": "Pergunta rejeitada pelo humano."}
+        return {"message": "Código rejeitado pelo humano."}
     else:
         raise HTTPException(status_code=400, detail="Decisão inválida")
 

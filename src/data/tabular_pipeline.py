@@ -1,9 +1,8 @@
 import xmlschema
 import pandas as pd
-import xml.etree.ElementTree as ET
-from typing import List, Dict, Any
 import logging
 import os
+from typing import List, Dict, Any
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
@@ -31,7 +30,7 @@ def extract_notes(field_node) -> List[str]:
                 notes_list.extend(note_val)
             else:
                 notes_list.append(note_val)
-    # Remove duplicates, strip whitespace
+    
     notes_list = [n.strip() for n in notes_list if isinstance(n, str) and n.strip()]
     return list(dict.fromkeys(notes_list))
 
@@ -42,12 +41,10 @@ def parse_tabular_xml(xsd_path: str, xml_path: str) -> List[Dict[str, Any]]:
     logging.info(f"Loading schema from: {xsd_path}")
     schema = xmlschema.XMLSchema(xsd_path)
     logging.info(f"Parsing XML file: {xml_path}")
-    # This returns nested dictionaries per the schema
     data_dict = schema.to_dict(xml_path)
 
     records: List[Dict[str, Any]] = []
 
-    # Root key is likely "ICD10CM.tabular"
     tabular_root = data_dict.get("ICD10CM.tabular", data_dict)
 
     chapters = tabular_root.get("chapter", [])
@@ -86,7 +83,6 @@ def parse_tabular_xml(xsd_path: str, xml_path: str) -> List[Dict[str, Any]]:
                     "use_additional_code": extract_notes(diag_node.get("useAdditionalCode")),
                     "code_first": extract_notes(diag_node.get("codeFirst")),
                     "notes": extract_notes(diag_node.get("notes")),
-                    # if you want parent_codes, you can store that too
                     "parent_codes": parent_codes.copy()
                 }
 
@@ -110,8 +106,9 @@ def parse_tabular_xml(xsd_path: str, xml_path: str) -> List[Dict[str, Any]]:
     logging.info(f"Extraction complete – total records: {len(records)}")
     return records
 
+
 def main():
-    # Update paths as needed
+    # Atualizar os caminhos conforme necessário
     xsd_file = r"C:\Users\Utilizador\ICD10\icd10cm-tabular-April-2024.xsd"
     xml_file = r"C:\Users\Utilizador\ICD10\icd10cm-tabular-April-2024.xml"
 
@@ -127,7 +124,6 @@ def main():
     df = pd.DataFrame(records)
     logging.info(f"DataFrame created with {len(df)} rows")
 
-    # Print number of records and first few entries
     print(f"📊 Total diagnosis code entries extracted: {len(df)}\n")
     print("✅ Sample entries:")
     sample = df.head(10).to_dict(orient="records")
@@ -143,10 +139,8 @@ def main():
         print("   Use Additional Code:  ", rec['use_additional_code'])
         print("   Code First:           ", rec['code_first'])
         print("   Notes:                ", rec['notes'])
-        # optionally print parent_codes
         print("   Parent Codes:         ", rec['parent_codes'])
 
-    # Save to CSV for inspection or further processing
     out_csv = "src/data/icd10_tabular_extracted.csv"
     df.to_csv(out_csv, index=False)
     logging.info(f"Saved extracted records to: {out_csv}")

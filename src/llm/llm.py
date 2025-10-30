@@ -6,7 +6,7 @@ from langgraph.checkpoint.memory import MemorySaver
 from src.tools.icd10_search import search_icd10_code
 
 load_dotenv()
-llm = init_chat_model("gemini-2.5-flash", model_provider="google_genai", api_key=os.environ["GOOGLE_API_KEY"])
+llm = init_chat_model("gemini-2.5-flash-lite-preview-09-2025", model_provider="google_genai", api_key=os.environ["GOOGLE_API_KEY"])
 
 coding_instructions = """coding_instructions =
 You are a medical coding assistant. 
@@ -21,7 +21,7 @@ Return your answer strictly with the following format:
 Where:
 - 'icd10_codes' must be valid ICD-10 codes (if multiple, include all).
 - 'confidence' is a float between 0 and 1 indicating certainty.
-- 'notes' should be a medium explanation.
+- 'notes' should be a medium explanation in text format, without the "\n" character.
 """
 
 checkpointer=MemorySaver()

@@ -17,15 +17,10 @@ Settings.embed_model = GoogleGenAIEmbedding(model_name="models/embedding-001")
 
 df = pd.read_csv('./src/data/icd10_tabular_extracted.csv')
 
-# Number of codes to convert to documents (test phase)
-NUM_ICD10_CODES = 100
-
-subset_df = df.head(NUM_ICD10_CODES)
-
 icd10_documents = []
 
 # Convert each row of the DataFrame into a Document object
-for _, row in subset_df.iterrows():
+for _, row in df.iterrows():
     text = (
         f"Code: {row.get('code')}\n"
         f"Description: {row.get('description')}\n"

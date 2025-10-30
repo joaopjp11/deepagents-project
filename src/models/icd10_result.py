@@ -13,6 +13,9 @@ def parse_icd10_result(raw_output: str):
     removing any potential markdown blocks.
     """
     try:
+        # Se raw_output for lista, junta tudo como string
+        if isinstance(raw_output, list):
+            raw_output = "".join(str(x) for x in raw_output)
         # Remove blocos Markdown tipo ```json ... ```
         cleaned = (
             raw_output.strip()

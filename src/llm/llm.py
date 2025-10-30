@@ -3,8 +3,6 @@ from dotenv import load_dotenv
 from langchain.chat_models import init_chat_model
 from deepagents import create_deep_agent
 from langgraph.checkpoint.memory import MemorySaver
-from src.tools.internet_search import internet_search
-from src.tools.weather import get_weather
 from src.tools.icd10_search import search_icd10_code
 
 load_dotenv()

@@ -31,4 +31,16 @@ def search_icd10_code(symptoms: str):
     Receives symptoms and returns the most relevant ICD-10 code.
     """
     response = query_engine.query(symptoms)
-    return response
+
+    sources = response.source_nodes
+    
+    top_source = sources[0]
+    code = top_source.metadata.get("code", "Unknown")
+    confidence = round(top_source.score, 3)
+    notes = f"Top ICD-10 match: {code}. Based on similarity of symptoms to ICD-10 descriptions."
+
+    return {
+        "icd10_codes": [code],
+        "confidence": confidence,
+        "notes": notes
+    }

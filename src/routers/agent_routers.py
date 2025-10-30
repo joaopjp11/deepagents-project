@@ -3,12 +3,13 @@ from src.models.query_request import QueryRequest
 from src.models.interrupt_decision import InterruptDecisionRequest
 from src.llm.llm import agent
 from langgraph.types import Command
+from src.models.icd10_result import parse_icd10_result
 import uuid
 
 router = APIRouter()
 config = {"configurable": {"thread_id": "some_id"}}
 
-# Armazenamento temporário dos interrupts
+# Temporary storage for interrupts
 interrupt_store = {}
 
 @router.post("/ask")
@@ -38,10 +39,13 @@ async def ask_model(request: QueryRequest):
             "message": "Interrupt forced. Awaiting human decision."
             }
 
-        return {"response": result["messages"][-1].content}
-    
+        structured = parse_icd10_result(result["messages"][-1].content)
+
+        return {"response": structured}
+
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.post("/interrupt_decision")
 async def interrupt_decision(request: InterruptDecisionRequest):
@@ -50,11 +54,12 @@ async def interrupt_decision(request: InterruptDecisionRequest):
         raise HTTPException(status_code=404, detail="Interrupt not found")
     if request.decision == "approve":
         result = agent.invoke(Command(resume={"decisions": [{"type": "approve"}]}), config=config)
-        return {"response": result["messages"][-1].content}
+        structured = parse_icd10_result(result["messages"][-1].content)
+        return {"response": structured}
     elif request.decision == "reject":
-        return {"message": "Código rejeitado pelo humano."}
+        return {"message": "Code rejected by human."}
     else:
-        raise HTTPException(status_code=400, detail="Decisão inválida")
+        raise HTTPException(status_code=400, detail="Invalid decision")
 
 @router.get("/")
 def root():

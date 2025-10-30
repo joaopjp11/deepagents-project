@@ -12,3 +12,6 @@ env/
 
 # Environment files
 .env
+
+# ChromaDB store
+chroma_store/

@@ -31,5 +31,5 @@ print("✅ Index successfully reloaded — ready for querying!")
 query_engine = index.as_query_engine()
 
 # Example query
-response = query_engine.query("What is the ICD-10 code for Cholera?")
+response = query_engine.query("What is the ICD-10 code for Hereditary lymphedema?")
 print(response)

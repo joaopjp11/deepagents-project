@@ -5,7 +5,6 @@ from llama_index.embeddings.google_genai import GoogleGenAIEmbedding
 from llama_index.llms.google_genai import GoogleGenAI
 import chromadb
 import os
-import asyncio
 
 load_dotenv()
 

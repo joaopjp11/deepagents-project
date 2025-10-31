@@ -33,14 +33,21 @@ def search_icd10_code(symptoms: str):
     response = query_engine.query(symptoms)
 
     sources = response.source_nodes
-    
-    top_source = sources[0]
-    code = top_source.metadata.get("code", "Unknown")
-    confidence = round(top_source.score, 3)
-    notes = f"Top ICD-10 match: {code}. Based on similarity of symptoms to ICD-10 descriptions."
+    icd10_codes = []
+    confidences = []
+    notes_list = []
+
+    for i in sources:
+        code = i.metadata.get("code", "Unknown")
+        confidence = round(i.score, 3)
+        note = f"Match: {code}. Based on similarity of symptoms to ICD-10 descriptions."
+
+        icd10_codes.append(code)
+        confidences.append(confidence)
+        notes_list.append(note)
 
     return {
-        "icd10_codes": [code],
-        "confidence": confidence,
-        "notes": notes
+        "icd10_codes": icd10_codes,
+        "confidence": confidences,
+        "notes": notes_list
     }

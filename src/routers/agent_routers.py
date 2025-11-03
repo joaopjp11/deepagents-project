@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.models.query_request import QueryRequest
 from src.models.interrupt_decision import InterruptDecisionRequest
-from src.llm.llm import agent
+from src.llm.llm_tool_index import agent
 from langgraph.types import Command
 from src.models.icd10_result import parse_icd10_result
 import uuid
@@ -55,7 +55,7 @@ async def interrupt_decision(request: InterruptDecisionRequest):
     if request.decision == "approve":
         result = agent.invoke(Command(resume={"decisions": [{"type": "approve"}]}), config=config)
         structured = parse_icd10_result(result["messages"][-1].content)
-        return {"response": structured}
+        return {result}
     elif request.decision == "reject":
         return {"message": "Code rejected by human."}
     else:

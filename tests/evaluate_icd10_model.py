@@ -1,7 +1,7 @@
 from datasets import load_dataset
 from sklearn.metrics import accuracy_score, f1_score
 from tqdm import tqdm
-from src.tools.icd10_search import search_icd10_code
+from tools.icd10_search import search_icd10_code
 
 print("A carregar dataset...")
 dataset = load_dataset("Gokul-waterlabs/ICD-10-CM", split="train")
@@ -36,3 +36,9 @@ f1 = f1_score(correct, [1] * len(correct))
 print("\nResultados da Avaliação:")
 print(f"Accuracy: {accuracy:.3f}")
 print(f"F1-score: {f1:.3f}")
+
+# Tabular + Index Combined Search
+# Resultados da Avaliação:
+# Accuracy: 0.824
+# F1-score: 0.904
+

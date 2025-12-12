@@ -28,7 +28,7 @@ accurate documentation, code assignment, and reporting of diagnoses and procedur
 These guidelines have been developed to assist both the healthcare provider and the coder 
 in identifying those procedures that are to be reported. The importance of consistent, 
 complete documentation in the medical record cannot be overemphasized. Without such 
-documentation accurate coding cannot be achieved. 
+documentation accurate coding cannot be achieved.
 1 
 Table of Contents 
 A. Conventions .……………………………………………………….......3 

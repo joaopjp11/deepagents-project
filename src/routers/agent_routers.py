@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from src.models.query_request import QueryRequest
 from src.models.interrupt_decision import InterruptDecisionRequest
-from src.llm.llm_tool_index import agent
+from src.llm.llm_pcs_identifier import agent
 from langgraph.types import Command
 from src.models.icd10_result import parse_icd10_result
 import uuid
@@ -39,9 +39,9 @@ async def ask_model(request: QueryRequest):
             "message": "Interrupt forced. Awaiting human decision."
             }
 
-        structured = parse_icd10_result(result["messages"][-1].content)
+        #structured = parse_icd10_result(result["messages"][-1].content)
 
-        return {"response": structured}
+        return {"response": result["messages"][-1].content}
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
